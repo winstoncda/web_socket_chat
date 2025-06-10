@@ -49,6 +49,35 @@ export const signup = async (req, res) => {
   }
 };
 
-export const login = (req, res) => {};
+export const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Données utilisateur invalides",
+      });
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordCorrect) {
+      return res.status(400).json({
+        message: "Données utilisateur invalides",
+      });
+    }
+    generateToken(user._id, res);
+    res.status(201).json({
+      _id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      profileAvatar: user.profileAvatar,
+    });
+  } catch (error) {
+    console.log("Error in login controller", error);
+  }
+};
 
 export const logout = (req, res) => {};
