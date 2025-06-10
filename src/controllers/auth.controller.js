@@ -122,3 +122,11 @@ export const updateProfile = async (req, res) => {
     console.log("error in update profile", error);
   }
 };
+
+export const checkAuthentification = (req, res) => {
+  try {
+    res.status(200).json(req.user);
+  } catch (error) {
+    console.log("error in check auth", error);
+  }
+};
