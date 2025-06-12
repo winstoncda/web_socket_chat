@@ -1,7 +1,6 @@
 import { Server } from "socket.io";
 import http from "http";
 import express from "express";
-import { log } from "console";
 
 const app = express();
 const serverHttp = http.createServer(app);
@@ -13,6 +12,10 @@ const io = new Server(serverHttp, {
 });
 
 const userSocketMap = {};
+
+export function getReceiverSocketId(userId) {
+  return userSocketMap[userId];
+}
 
 io.on("connection", (socket) => {
   console.log("Un utilisateur s'est connecté", socket.id);
@@ -26,6 +29,8 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("Un utilisateur s'est déconnecté", socket.id);
+    delete userSocketMap[userId];
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
   });
 });
 
